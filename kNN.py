@@ -26,7 +26,7 @@ def main(argv):
 
     rlsLine = infile.readline()
     rlsLine = rlsLine.strip()
-    rlsLine = rlsLine.split(", ")
+    rlsLine = rlsLine.split(",")
     rlsDate = int(rlsLine[0])
     rlsYear = int(rlsLine[1])
     curYear = int(rlsLine[2])
@@ -41,7 +41,7 @@ def main(argv):
     for line in infile.readlines():
         #print line
         line = line.strip()
-        inDateYear = line.split(", ")
+        inDateYear = line.split(",")
         #print inDateYear[0]
         #print inDateYear[1]
         inDates.append(int(inDateYear[0]))
