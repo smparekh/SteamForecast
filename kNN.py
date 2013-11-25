@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys, getopt, string
 import numpy as np
+from datetime import datetime
 
 def main(argv):
     inputfile = ''
@@ -45,8 +46,9 @@ def main(argv):
         #print inDateYear[1]
         inDates.append(int(inDateYear[0]))
         inYears.append(int(inDateYear[1]))
-        saleDates[int(inDateYear[1])-1][int(inDateYear[0])-1] = 1;
-    saleDates[int(inDateYear[1])-1][int(inDateYear[0]):] = -1; 
+        saleDates[int(inDateYear[1])-1][int(inDateYear[0])-1] = 1
+    curDay = datetime.now().timetuple().tm_yday
+    saleDates[int(inDateYear[1])-1][int(curDay):] = -1
     #print len(inDates)
     #print len(inYears)
     
