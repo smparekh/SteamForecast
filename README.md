@@ -6,6 +6,7 @@ Steam sale predictor for ECE-4984
 Requirements:
 -------------
 - Numpy
+
 TODO:
 -----
 - k-Nearest Neighbor (using Date difference) - Shaishav
