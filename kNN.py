@@ -28,11 +28,12 @@ def main(argv):
     rlsLine = rlsLine.split(", ")
     rlsDate = int(rlsLine[0])
     rlsYear = int(rlsLine[1])
-    print rlsDate, ", ", rlsYear
+    curYear = int(rlsLine[2])
+    print rlsDate, ", ", rlsYear, ", ", curYear
 
     inDates = []
     inYears = []
-    numRows = 2 #max(inYears)
+    numRows = curYear #2 #max(inYears)
     numCols = 365
     saleDates = np.zeros((numRows, numCols), dtype=np.int)
 
