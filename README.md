@@ -4,7 +4,7 @@ SteamForecast
 Steam sale predictor for ECE-4984
 
 ##Requirements:
-- Numpy
+- Numpy <br>
 Ubuntu:
 <pre>
     sudo apt-get install python-numpy
