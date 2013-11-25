@@ -46,7 +46,7 @@ def main(argv):
         inDates.append(int(inDateYear[0]))
         inYears.append(int(inDateYear[1]))
         saleDates[int(inDateYear[1])-1][int(inDateYear[0])-1] = 1;
-    saleDates[int(inDateYear[1])-1][int(inDateYear[0])-1:] = -1; 
+    saleDates[int(inDateYear[1])-1][int(inDateYear[0]):] = -1; 
     #print len(inDates)
     #print len(inYears)
     
