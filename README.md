@@ -16,9 +16,20 @@ Fedora:
 
 ###Usage:
 - kNN.py <br>
+Inputs
 <pre>
     kNN.py -i input_file -k range
 </pre>
+
+Outputs
+
+<pre>
+    Input file name
+    Current day
+    Sale Day Range
+    Sale days, non-sale days
+</pre>
+
 ![kNN Usage Image](https://github.com/carbon-/SteamForecast/raw/master/screenshots/kNN_usage.png "kNN Usage")
 
 ###TODO:
