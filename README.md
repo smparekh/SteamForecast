@@ -20,9 +20,7 @@ Inputs
 <pre>
     kNN.py -i input_file -k range
 </pre>
-
 Outputs
-
 <pre>
     Input file name
     Current day
