@@ -17,9 +17,10 @@ Fedora:
 ###Usage:
 - kNN.py <br>
 <pre>
-    kNN.py -i <input_data> -k <range to check for sales>
+    kNN.py -i input_file -k range
 </pre>
 ![kNN Usage Image](https://github.com/carbon-/SteamForecast/raw/master/screenshots/kNN_usage.png "kNN Usage")
+
 ###TODO:
 - k-Nearest Neighbor (using Date difference) - Shaishav
 - Web Parser - Travis
