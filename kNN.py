@@ -5,18 +5,20 @@ from datetime import datetime
 
 def main(argv):
     inputfile = ''
-
+    kstr = ''
     try:
-        opts, args = getopt.getopt(argv, 'hi:')
+        opts, args = getopt.getopt(argv, 'hi:k:')
     except getopt.GetoptError:
-        print 'Usage: kNN.py -i <inputfile>'
+        print 'Usage: kNN.py -i <inputfile> -k <k for knn>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage: kNN.py -i <inputfile>'
+            print 'Usage: kNN.py -i <inputfile> -k <k for knn>'
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
+        elif opt in ("-k"):
+            kstr = arg
     try:
         infile = open(inputfile, 'r')
     except IOError:
@@ -30,7 +32,7 @@ def main(argv):
     rlsDate = int(rlsLine[0])
     rlsYear = int(rlsLine[1])
     curYear = int(rlsLine[2])
-    print rlsDate, ", ", rlsYear, ", ", curYear
+    #print rlsDate, ", ", rlsYear, ", ", curYear
 
     inDates = []
     inYears = []
@@ -53,7 +55,13 @@ def main(argv):
     #print len(inYears)
     
     saleDates[rlsYear-1][0:rlsDate] = -1
-    print saleDates
+    k = int(kstr)
+    #print saleDates
+    saleRange = saleDates[:,curDay-k:curDay+k];
+    print 'Current Day: ',curDay;
+    print saleRange
+    print (saleRange==1).sum(), (saleRange==0).sum()
+    infile.close()
 
 if __name__ == "__main__": 
     main(sys.argv[1:])
