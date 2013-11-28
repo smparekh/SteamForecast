@@ -48,19 +48,23 @@ def main(argv):
         #print inDateYear[1]
         inDates.append(int(inDateYear[0]))
         inYears.append(int(inDateYear[1]))
-        saleDates[int(inDateYear[1])-1][int(inDateYear[0])-1] = 1
-    curDay = datetime.now().timetuple().tm_yday
-    saleDates[int(inDateYear[1])-1][int(curDay):] = -1
+        saleDates[int(inDateYear[1])-1, int(inDateYear[0])-1] = 1
+    curDay = int(datetime.now().timetuple().tm_yday)
+    saleDates[curYear-1, curDay:] = -1
     #print len(inDates)
     #print len(inYears)
     
-    saleDates[rlsYear-1][0:rlsDate] = -1
+    saleDates[rlsYear-1, 0:rlsDate] = -1
     k = int(kstr)
+    
     #print saleDates
-    saleRange = saleDates[:,curDay-k:curDay+k];
-    print 'Current Day: ',curDay;
+    if (curDay+k+1 <= 365):
+        saleRange = saleDates[:,curDay-k:curDay+k+1]
+    else:
+        saleRange = saleDates[:,curDay-k:]
+    print 'Current Day:', curDay
     print saleRange
-    print (saleRange==1).sum(), (saleRange==0).sum()
+    print 'Sale Days:', (saleRange==1).sum(), '| Non sale days:', (saleRange==0).sum()
     infile.close()
 
 if __name__ == "__main__": 
