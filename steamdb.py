@@ -1,5 +1,5 @@
 import psycopg2
-
+import psycopg2.extras
 
 def initDB():
 	try:
@@ -31,7 +31,7 @@ def addSales(saledict):
 
 def getSales(app_id):
 	conn = initDB()
-	cur = conn.cursor()
+	cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 	cur.execute("""SELECT * FROM sales WHERE game_fk = %s""",[app_id])
 	sales = cur.fetchall()
 	closeDB(conn)

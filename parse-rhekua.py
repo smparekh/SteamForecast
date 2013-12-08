@@ -24,12 +24,13 @@ def main(argv=None):
 		start =  time.mktime(datetime.datetime.strptime(rng[0], "%Y-%m-%d").timetuple()) #start
 		end = time.mktime(datetime.datetime.strptime(rng[1], "%Y-%m-%d").timetuple()) #stop
 		rng = re.findall("\$(\d*\.\d{2})", str(prices[i]))
-		base = int(float(rng[0])*10)  #base
-		sale = int(float(rng[1])*10)  #sale price
+		base = int(float(rng[0])*100)  #base
+		sale = int(float(rng[1])*100)  #sale price
 		saledict.append({"game_fk":app_id, "start":psycopg2.TimestampFromTicks(start), "end":psycopg2.TimestampFromTicks(end), "base_price":base, "sale_price":sale})
 
 	steamdb.addSales(saledict)
-	print steamdb.getSales(app_id)
+	for i in steamdb.getSales(app_id):
+		print(i["start_time"].day)
 
 if __name__ == "__main__":
     main()

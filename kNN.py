@@ -1,24 +1,27 @@
 #!/usr/bin/python
-import sys, getopt, string
+import sys, getopt, string, steamdb
 import numpy as np
-from datetime import datetime
+import datetime
 
 def main(argv):
     inputfile = ''
     kstr = ''
     try:
-        opts, args = getopt.getopt(argv, 'hi:k:')
+        opts, args = getopt.getopt(argv, 'hi:k:g:')
     except getopt.GetoptError:
-        print 'Usage: kNN.py -i <inputfile> -k <k for knn>'
+        print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage: kNN.py -i <inputfile> -k <k for knn>'
+            print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
         elif opt in ("-k"):
             kstr = arg
+        elif opt in ("-g", "--genfile"):
+            inputfile = genFile(arg)
+            sys.exit()
     try:
         infile = open(inputfile, 'r')
     except IOError:
@@ -67,6 +70,15 @@ def main(argv):
     print 'Sale Days:', (saleRange==1).sum(), '| Non sale days:', (saleRange==0).sum()
     infile.close()
 
+def genFile(app_id):
+    f = open(str(app_id)+".txt", "w")
+
+    for i in steamdb.getSales(app_id):
+        startTime = i["start_time"];
+        delta = i["end_time"] - startTime
+        for j in range(0,delta.days+1):
+            curTime =  startTime + datetime.timedelta(days=j)
+            f.write(str(curTime.timetuple().tm_yday) + "," + str((curTime.year - startTime.year)+1)+'\n')
+    f.close();
 if __name__ == "__main__": 
     main(sys.argv[1:])
-
