@@ -15,7 +15,7 @@ def main(argv=None):
 	name = re.search("^Sale history for (.*)",name.string)
 	gamedict = ({"app_id":app_id, "name":name.group(1)})
 
-	#steamdb.addGames(gamedict)
+	steamdb.addGames(gamedict)
 	dates = soup.find_all(attrs={"class": "genre_release"})
 	prices = soup.find_all(attrs={"class":"tab_price"})
 	saledict = []
@@ -29,8 +29,6 @@ def main(argv=None):
 		saledict.append({"game_fk":app_id, "start":psycopg2.TimestampFromTicks(start), "end":psycopg2.TimestampFromTicks(end), "base_price":base, "sale_price":sale})
 
 	steamdb.addSales(saledict)
-	for i in steamdb.getSales(app_id):
-		print(i["start_time"].day)
 
 if __name__ == "__main__":
     main()
