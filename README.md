@@ -5,6 +5,9 @@ Steam sale predictor for ECE-4984
 
 ##Requirements:
 - Numpy <br>
+- Beautiful Soup 4 <br>
+- Httplib2 <br>
+- Psycopg2
 Ubuntu:
 <pre>
     sudo apt-get install python-numpy
@@ -12,6 +15,9 @@ Ubuntu:
 Fedora:
 <pre>
     sudo yum install numpy
+    sudo easy_install psycopg2
+    sudo easy_install beautifulsoup4
+    sudo easy_install httplib2
 </pre>
 
 ###Usage:
@@ -22,10 +28,15 @@ Inputs
 </pre>
 Outputs
 <pre>
-    Input file name
-    Current day
-    Sale Day Range
-    Sale days, non-sale days
+    Correctly classified, false positives, misclassified
+</pre>
+OR to generate dataset for a game
+<pre>
+    kNN.py -g APP_ID
+</pre>
+Outputs
+<pre>
+    APP_ID.txt
 </pre>
 
 ![kNN Usage Image](https://github.com/carbon-/SteamForecast/raw/master/screenshots/kNN_usage.png "kNN Usage")
