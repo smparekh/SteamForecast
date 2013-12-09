@@ -59,14 +59,14 @@ def main(argv):
             trainDates[int(inDateYear[1])-1, int(inDateYear[0])-1] = 1
 
     curDay = int(datetime.datetime.now().timetuple().tm_yday)
-    testDates[curYear-2, curDay:] = -1
+    testDates[0, curDay:] = -1
     #print len(inDates)
     #print len(inYears)
     
     trainDates[rlsYear-1, 0:rlsDate] = -1
     k = int(kstr)
 
-    results = np.zeros((1, 366), dtype=np.int)
+    predVector = np.zeros((1, 366), dtype=np.int)
     numSale = np.zeros((1, 366), dtype=np.int)
     nnumSale = np.zeros((1,366), dtype=np.int)
     #print saleDates
@@ -89,18 +89,31 @@ def main(argv):
         numSale[0,i] = yesSale
         nnumSale[0,i] = noSale
         #print 'Sale Days:', yesSale, '| Non sale days:', noSale
-        if (yesSale > noSale):
-            results[0,i] = 1
+        if (yesSale >= noSale):
+            predVector[0,i] = 1
         else:
-            results[0,i] = 0
+            predVector[0,i] = 0
         #print 'Results:', results[0, curDay], testDates[0, curDay]
-        
-    #print results, testDates
+    good = 0;
+    falsepos = 0;
+    miss = 0;
+    for i in range(0,365):
+        if (predVector[0,i] == 1 and testDates[0,i] == 1):
+            good = good + 1
+        elif ((predVector[0,i] == 0 and testDates[0,i] == 1)): 
+            miss = miss + 1
+        elif ((predVector[0,i] == 1 and testDates[0,i] == 0)):
+            falsepos = falsepos + 1;
+
+    #print predVector#, testDates
+    results = np.equal(predVector, testDates)
+    print (results==True).sum(), (results==False).sum()
+    print good, miss, falsepos
     # print numSale
     # print nnumSale
-    # print trainDates
-    # print results
-    
+    #print trainDates#, testDates
+    #print results
+
     infile.close()
 
 def genFile(app_id):
