@@ -41,6 +41,8 @@ def main(argv):
     # Create empty matrices
     numRows = curYear #2 #max(inYears)
     numCols = 366
+    
+
     trainDates = np.zeros((numRows-1, numCols), dtype=np.int)
     testDates = np.zeros((1, numCols), dtype=np.int)
     saleDates = np.zeros((numRows, numCols), dtype=np.int)
@@ -63,12 +65,16 @@ def main(argv):
     # Get current day and label anything past today as unknown -1
     curDay = int(datetime.datetime.now().timetuple().tm_yday)
     testDates[0, curDay:] = -1
+    #print trainDates
+    #print testDates
     #print len(inDates)
     #print len(inYears)
     
     # Label anything before release day as unknown -1
     trainDates[rlsYear-1, 0:rlsDate] = -1
     k = int(kstr)
+    k_year = 999
+    k_day = k
 
     # Create some more empty matrices
     predVector = np.zeros((1, 366), dtype=np.int)
@@ -77,12 +83,12 @@ def main(argv):
     #print saleDates
     # Go through training data and create a prediction vector
     for i in range(0,365):
-        if (i-k < 0):
-            saleRange = trainDates[:, 0:i+k+1]
-        elif (i+k+1 <= 365):
-            saleRange = trainDates[:,i-k:i+k+1]
+        if (i-k_day < 0):
+            saleRange = trainDates[0:k_year,0:i+k_day+1]
+        elif (i+k_day+1 <= 365):
+            saleRange = trainDates[0:k_year,i-k_day:i+k_day+1]
         else:
-            saleRange = trainDates[:,i-k:]
+            saleRange = trainDates[0:k_year,i-k_day:]
     
         #print 'Current Day:', curDay
         #print trainDates, testDates
@@ -98,9 +104,13 @@ def main(argv):
         else:
             predVector[0,i] = 0
         #print 'Results:', results[0, curDay], testDates[0, curDay]
+
     good = 0;
-    falsepos = 0;
-    miss = 0;
+    falsepos = 0; #type 1 error
+    miss = 0; #type 2 error
+    trueneg = 0;
+
+    #print predVector
     # See how the algorithm did, find number of correct, false positives and incorrect predictions
     for i in range(0,365):
         if (predVector[0,i] == 1 and testDates[0,i] == 1):
@@ -109,11 +119,13 @@ def main(argv):
             miss = miss + 1
         elif ((predVector[0,i] == 1 and testDates[0,i] == 0)):
             falsepos = falsepos + 1;
+        elif (predVector[0,i] == 0 and testDates[0,i] == 0):
+            trueneg = trueneg + 1;
 
-    # print predVector#, testDates
+    #print predVector, testDates
     # results = np.equal(predVector, testDates)
     # print (results==True).sum(), (results==False).sum()
-    print good, miss, falsepos
+    print "True Pos: %s True Neg: %s TypeI Err: %s TypeII Err: %s" % (good, trueneg,falsepos,miss)
     # print numSale
     # print nnumSale
     # print trainDates#, testDates

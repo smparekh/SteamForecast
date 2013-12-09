@@ -24,7 +24,10 @@ def main(argv):
 
     steamdb.removeGame(app_id)
     parse_rhekua.main(app_id)
-    release_date = datetime.datetime(int(release_year),1,1) + datetime.timedelta(days=int(release_day));
+    release_date = datetime.datetime(int(release_year),1,1) + datetime.timedelta(days=int(release_day))
+    datebase_date = datetime.date(2010,06,28)
+    if release_date < datebase_date:
+        release_date = datebase_date
     steamdb.addReleaseDate(app_id,time.mktime(release_date.timetuple()))
 
 if __name__ == "__main__": 

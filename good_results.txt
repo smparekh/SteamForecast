@@ -1,0 +1,8 @@
+Tests that did well on training data
+
+python kNN.py -i 220.txt -k 1
+True Pos: 12 True Neg: 307 TypeI Err: 10 TypeII Err: 14
+
+python kNN.py -i 400.txt -k 2
+True Pos: 12 True Neg: 297 TypeI Err: 13 TypeII Err: 21
+
