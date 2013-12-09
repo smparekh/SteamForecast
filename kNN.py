@@ -65,39 +65,42 @@ def main(argv):
     
     trainDates[rlsYear-1, 0:rlsDate] = -1
     k = int(kstr)
-    
-    #print saleDates
-    if (curDay-k < 0):
-        saleRange = trainDates[:, 0:curDay+k+1]
-        saleTest = testDates[:, 0:curDay+k+1]
-    elif (curDay+k+1 <= 365):
-        saleRange = trainDates[:,curDay-k:curDay+k+1]
-        saleTest = testDates[:,curDay-k:curDay+k+1]
-    else:
-        saleRange = trainDates[:,curDay-k:]
-        saleTest = testDates[:,curDay-k:]
-    
-    print 'Current Day:', curDay
-    print trainDates, testDates
-    
-    yesSale = (saleRange==1).sum()
-    noSale = (saleRange==0).sum()
-    results = np.zeros((1, 366), dtype=np.int)
-    print 'Sale Days:', yesSale, '| Non sale days:', noSale
-    if (yesSale > noSale):
-        results[0,curDay] = 1
-    else:
-        results[0,curDay] = 0
-    print 'Results:', results[0, curDay], testDates[0, curDay]
-    if (results[0,curDay] == testDates[0, curDay]):
-        print 'Correct Prediction'
-    else:
-        print 'Incorrect Prediction'
-    if (testDates[0, curDay] == 1):
-        print 'There was a sale on', curDay
-    else:
-        print 'There was no sale on', curDay
 
+    results = np.zeros((1, 366), dtype=np.int)
+    numSale = np.zeros((1, 366), dtype=np.int)
+    nnumSale = np.zeros((1,366), dtype=np.int)
+    #print saleDates
+    for i in range(0,365):
+        if (i-k < 0):
+            saleRange = trainDates[:, 0:i+k+1]
+            saleTest = testDates[:, 0:i+k+1]
+        elif (i+k+1 <= 365):
+            saleRange = trainDates[:,i-k:i+k+1]
+            saleTest = testDates[:,i-k:i+k+1]
+        else:
+            saleRange = trainDates[:,i-k:]
+            saleTest = testDates[:,i-k:]
+    
+        #print 'Current Day:', curDay
+        #print trainDates, testDates
+        
+        yesSale = (saleRange==1).sum()
+        noSale = (saleRange==0).sum()
+        numSale[0,i] = yesSale
+        nnumSale[0,i] = noSale
+        #print 'Sale Days:', yesSale, '| Non sale days:', noSale
+        if (yesSale > noSale):
+            results[0,i] = 1
+        else:
+            results[0,i] = 0
+        #print 'Results:', results[0, curDay], testDates[0, curDay]
+        
+    #print results, testDates
+    # print numSale
+    # print nnumSale
+    # print trainDates
+    # print results
+    
     infile.close()
 
 def genFile(app_id):
