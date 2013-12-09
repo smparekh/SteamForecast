@@ -4,6 +4,7 @@ import numpy as np
 import datetime
 
 def main(argv):
+    np.set_printoptions(threshold='nan')
     inputfile = ''
     kstr = ''
     try:
@@ -54,7 +55,8 @@ def main(argv):
         inDateYear = line.split(",")
         #print inDateYear[0]
         #print inDateYear[1]
-        
+       
+	saleDates[int(inDateYear[1])-1, int(inDateYear[0])-1] = 1 
         # Use the current year for testing
         if (int(inDateYear[1]) == curYear):
             testDates[0, int(inDateYear[0])-1] = 1
@@ -65,6 +67,8 @@ def main(argv):
     # Get current day and label anything past today as unknown -1
     curDay = int(datetime.datetime.now().timetuple().tm_yday)
     testDates[0, curDay:] = -1
+    saleDates[0, :rlsDate] = -1
+    saleDates[curYear-1, curDay:] = -1
     #print trainDates
     #print testDates
     #print len(inDates)
@@ -82,19 +86,22 @@ def main(argv):
     nnumSale = np.zeros((1,366), dtype=np.int)
     #print saleDates
     # Go through training data and create a prediction vector
-    for i in range(0,365):
+    for i in range(0,366):
         if (i-k_day < 0):
-            saleRange = trainDates[0:k_year,0:i+k_day+1]
+            trainSaleRange = trainDates[0:k_year,0:i+k_day+1]
+            testSaleRange = testDates[0,:i]
         elif (i+k_day+1 <= 365):
-            saleRange = trainDates[0:k_year,i-k_day:i+k_day+1]
+            trainSaleRange = trainDates[0:k_year,i-k_day:i+k_day+1]
+            testSaleRange = testDates[0,i-k_day:i]
         else:
-            saleRange = trainDates[0:k_year,i-k_day:]
+            trainSaleRange = trainDates[0:k_year,i-k_day:]
+            testSaleRange = testDates[0,i-k_day:i]
     
         #print 'Current Day:', curDay
         #print trainDates, testDates
-        
-        yesSale = (saleRange==1).sum()
-        noSale = (saleRange==0).sum()
+        # print testSaleRange, i
+        yesSale = (trainSaleRange==1).sum() + (testSaleRange==1).sum() 
+        noSale = (trainSaleRange==0).sum() + (testSaleRange==0).sum()
         numSale[0,i] = yesSale
         nnumSale[0,i] = noSale
         #print 'Sale Days:', yesSale, '| Non sale days:', noSale
@@ -129,9 +136,20 @@ def main(argv):
     # print numSale
     # print nnumSale
     # print trainDates#, testDates
-    # print results
+    # print result
+    f1 = open('results.txt', 'w+')
 
+    row_labels = ['0', '1', '2', '3']
+    print >> f1, '    '
+    for i in range(0,366):
+    	print >> f1, '%04s' % (i),
+    print >> f1
+    for row_label, row in zip(row_labels, saleDates):
+	print >> f1, '%s [%s]' % (row_label, ' '.join('%04s' % i for i in row))
+    for preds in predVector:
+        print >> f1 ,'  [%s]' % (' '.join('%04s' % i for i in preds))
     infile.close()
+    f1.close()
 
 def genFile(app_id):
     f = open(str(app_id)+".txt", "w")
