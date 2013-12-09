@@ -20,7 +20,7 @@
     <!-- Prettify -->
     <link href="google-code-prettify/prettify.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
-
+        
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="assets/js/html5shiv.js"></script>
@@ -132,7 +132,8 @@ function [sDates,saleRange,pV] = createDateVector(filename, k, curDate)
   pV = [saleDays nsaleDays];
 end
 </pre>
-      </div>
+      <canvas id="exampleChart" width="600" height="400"></canvas>
+     </div>
       
     </div>
 
@@ -140,6 +141,8 @@ end
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/Chart.js"></script>
+    <script src="createChart.js"><script>
     <script src="assets/js/jquery.js"></script>
     <script src="dist/js/bootstrap.min.js"></script>
     <script src="assets/js/holder.js"></script>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+    <script src="js/Chart.js"></script>
+</head>
+<body>
+    <div>
+        <canvas id="exampleChart" width="600" height="400"></canvas>
+        <script>
+            var data = {
+                labels : ["January", "February", "March", "April"],
+                datasets : [
+                {
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    pointColor : "rgba(220,220,220,1)",
+                    pointStrokeColor : "#fff",
+                    data : [65, 59, 90, 81]
+                }
+                ]
+            }
+            var ctx = document.getElementById("exampleChart").getContext("2d");
+            new Chart(ctx).Line(data);
+        </script>
+     </div>
+</body>
+
+
+                
+
