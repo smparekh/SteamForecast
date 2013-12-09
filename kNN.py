@@ -138,7 +138,7 @@ def genFile(app_id):
 
     game = steamdb.getGame(app_id)
     release_date = game[0]["release_date"]
-    print str(datetime.datetime.now().year - release_date.year +1)
+    # print str(datetime.datetime.now().year - release_date.year +1)
     f.write(str(release_date.timetuple().tm_yday) + ",1," + str(datetime.datetime.now().year - release_date.year +1)+'\n')
     for i in steamdb.getSales(app_id):
         startTime = i["start_time"];
