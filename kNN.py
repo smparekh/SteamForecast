@@ -29,6 +29,7 @@ def main(argv):
         sys.exit(2)
     print 'Parsing file: ', inputfile
 
+    # Read Release Day, Release Year and Current Year from file
     rlsLine = infile.readline()
     rlsLine = rlsLine.strip()
     rlsLine = rlsLine.split(",")
@@ -37,49 +38,51 @@ def main(argv):
     curYear = int(rlsLine[2])
     #print rlsDate, ", ", rlsYear, ", ", curYear
 
-    inDates = []
-    inYears = []
+    # Create empty matrices
     numRows = curYear #2 #max(inYears)
     numCols = 366
     trainDates = np.zeros((numRows-1, numCols), dtype=np.int)
     testDates = np.zeros((1, numCols), dtype=np.int)
     saleDates = np.zeros((numRows, numCols), dtype=np.int)
 
+    # Read file
     for line in infile.readlines():
         #print line
         line = line.strip()
         inDateYear = line.split(",")
         #print inDateYear[0]
         #print inDateYear[1]
-        inDates.append(int(inDateYear[0]))
-        inYears.append(int(inDateYear[1]))
+        
+        # Use the current year for testing
         if (int(inDateYear[1]) == curYear):
             testDates[0, int(inDateYear[0])-1] = 1
+        # Use past years for training
         elif (int(inDateYear[1]) < curYear):
             trainDates[int(inDateYear[1])-1, int(inDateYear[0])-1] = 1
 
+    # Get current day and label anything past today as unknown -1
     curDay = int(datetime.datetime.now().timetuple().tm_yday)
     testDates[0, curDay:] = -1
     #print len(inDates)
     #print len(inYears)
     
+    # Label anything before release day as unknown -1
     trainDates[rlsYear-1, 0:rlsDate] = -1
     k = int(kstr)
 
+    # Create some more empty matrices
     predVector = np.zeros((1, 366), dtype=np.int)
     numSale = np.zeros((1, 366), dtype=np.int)
     nnumSale = np.zeros((1,366), dtype=np.int)
     #print saleDates
+    # Go through training data and create a prediction vector
     for i in range(0,365):
         if (i-k < 0):
             saleRange = trainDates[:, 0:i+k+1]
-            saleTest = testDates[:, 0:i+k+1]
         elif (i+k+1 <= 365):
             saleRange = trainDates[:,i-k:i+k+1]
-            saleTest = testDates[:,i-k:i+k+1]
         else:
             saleRange = trainDates[:,i-k:]
-            saleTest = testDates[:,i-k:]
     
         #print 'Current Day:', curDay
         #print trainDates, testDates
@@ -89,6 +92,7 @@ def main(argv):
         numSale[0,i] = yesSale
         nnumSale[0,i] = noSale
         #print 'Sale Days:', yesSale, '| Non sale days:', noSale
+        # Predict a sale based on # of sale days surrounding that day in the past
         if (yesSale >= noSale):
             predVector[0,i] = 1
         else:
@@ -97,6 +101,7 @@ def main(argv):
     good = 0;
     falsepos = 0;
     miss = 0;
+    # See how the algorithm did, find number of correct, false positives and incorrect predictions
     for i in range(0,365):
         if (predVector[0,i] == 1 and testDates[0,i] == 1):
             good = good + 1
@@ -105,14 +110,14 @@ def main(argv):
         elif ((predVector[0,i] == 1 and testDates[0,i] == 0)):
             falsepos = falsepos + 1;
 
-    #print predVector#, testDates
-    results = np.equal(predVector, testDates)
-    print (results==True).sum(), (results==False).sum()
+    # print predVector#, testDates
+    # results = np.equal(predVector, testDates)
+    # print (results==True).sum(), (results==False).sum()
     print good, miss, falsepos
     # print numSale
     # print nnumSale
-    #print trainDates#, testDates
-    #print results
+    # print trainDates#, testDates
+    # print results
 
     infile.close()
 
