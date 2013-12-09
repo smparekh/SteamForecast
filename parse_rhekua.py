@@ -1,10 +1,12 @@
 import httplib2, re, time, datetime, steamdb, psycopg2,sys 
 from bs4 import BeautifulSoup
-def main(argv=None):
+
+def main(app_id=0,argv=None):
 	if argv is None:
 			argv = sys.argv
-
-	app_id = argv[1]
+	if app_id == 0:
+		app_id = argv[1]
+		
 	pat = re.compile('genre_release*\n(.+?)*\n</div>')
 	http = httplib2.Http()
 	headers, body = http.request("http://steamsales.rhekua.com/view.php?steam_type=app&steam_id=" + str(app_id))

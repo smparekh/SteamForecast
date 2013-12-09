@@ -103,12 +103,16 @@ def main(argv):
 def genFile(app_id):
     f = open(str(app_id)+".txt", "w")
 
+    game = steamdb.getGame(app_id)
+    release_date = game[0]["release_date"]
+    print str(datetime.datetime.now().year - release_date.year +1)
+    f.write(str(release_date.timetuple().tm_yday) + ",1," + str(datetime.datetime.now().year - release_date.year +1)+'\n')
     for i in steamdb.getSales(app_id):
         startTime = i["start_time"];
         delta = i["end_time"] - startTime
         for j in range(0,delta.days+1):
             curTime =  startTime + datetime.timedelta(days=j)
-            f.write(str(curTime.timetuple().tm_yday) + "," + str((curTime.year - startTime.year)+1)+'\n')
+            f.write(str(curTime.timetuple().tm_yday) + "," + str((curTime.year - release_date.year)+1)+'\n')
     f.close();
 if __name__ == "__main__": 
     main(sys.argv[1:])

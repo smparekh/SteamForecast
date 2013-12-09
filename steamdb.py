@@ -42,3 +42,26 @@ def removeSales(app_id):
 	cur =conn.cursor()
 	cur.execute("""DELETE FROM sales WHERE game_fk = %s""", [app_id])
 	closeDB(conn)
+
+def addReleaseDate(app_id, releaseDate):
+	conn = initDB()
+	cur = conn.cursor()
+	releaseDate = psycopg2.TimestampFromTicks(releaseDate)
+	update = "UPDATE games SET release_date = " +str(releaseDate) +" WHERE app_id = " +str(app_id)
+	cur.execute(update)
+	closeDB(conn)
+
+def removeGame(app_id):
+	removeSales(app_id)
+	conn =initDB()
+	cur = conn.cursor()
+	cur.execute("DELETE FROM games WHERE app_id = " +str(app_id))
+	closeDB(conn)
+
+def getGame(app_id):
+	conn = initDB()
+	cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cur.execute("SELECT * FROM games WHERE app_id = "+str(app_id))
+	game = cur.fetchall()
+	closeDB(conn)
+	return game
