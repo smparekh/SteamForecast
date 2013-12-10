@@ -2,7 +2,7 @@
 import sys, getopt, string, steamdb
 import numpy as np
 import datetime
-
+import os, shutil
 def main(argv):
     np.set_printoptions(threshold='nan')
     inputfile = ''
@@ -10,8 +10,9 @@ def main(argv):
     wstr = '0'
     ystr = '-1'
     lstr = '0'
+    rstr = '0'
     try:
-        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:l:')
+        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:l:r:')
     except getopt.GetoptError:
         print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
         sys.exit(2)
@@ -32,13 +33,15 @@ def main(argv):
             ystr = arg
         elif opt in ("-l"):
             lstr = arg
+        elif opt in ("-r", "--results"):
+            rstr = '1'
     try:
         infile = open(inputfile, 'r')
     except IOError:
         print 'File not found, check name and existence.'
         sys.exit(2)
     print 'Parsing file: ', inputfile
-
+    show_results = int(rstr)
     # Read Release Day, Release Year and Current Year from file
     rlsLine = infile.readline()
     rlsLine = rlsLine.strip()
@@ -183,6 +186,10 @@ def main(argv):
     # print nnumSale
     # print trainDates#, testDates
     # print result
+    
+
+    if(show_results==0):
+        sys.exit()
     f1 = open('results.txt', 'w+')
 
     row_labels = ['0', '1', '2', '3']
@@ -196,7 +203,13 @@ def main(argv):
         print >> f1 ,'  [%s]' % (' '.join('%04s' % i for i in preds))
     infile.close()
     f1.close()
-
+    dire = "./results/"
+    fname = dire + inputfile
+    if not os.path.exists(dire):
+        os.makedirs(dire+"/data/")
+    f1 = open(fname,'a+')
+    print >> f1, '%s,%s,%s,%s,%s' % (calculatek,good,falsepos,miss,trueneg)
+    f1.close()
 def genFile(app_id):
     f = open(str(app_id)+".txt", "w")
 
