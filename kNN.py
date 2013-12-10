@@ -133,7 +133,7 @@ def main(argv):
 
     #print predVector
     # See how the algorithm did, find number of correct, false positives and incorrect predictions
-    for i in range(0,365):
+    for i in range(0,366):
         if (predVector[0,i] == 1 and testDates[0,i] == 1):
             good = good + 1
         elif ((predVector[0,i] == 0 and testDates[0,i] == 1)): 
@@ -187,7 +187,7 @@ def genWeightVector(lastyear, wconstant):
         weight[i] = 1 + ((i - lastyear+1) * wconstant)
         if(weight[i] < 0):
             weight[i] = 0
-    print weight
+    #print weight
     return weight
 
 if __name__ == "__main__": 
