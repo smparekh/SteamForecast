@@ -65,3 +65,11 @@ def getGame(app_id):
 	game = cur.fetchall()
 	closeDB(conn)
 	return game
+
+def getGames():
+	conn = initDB()
+	cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	cur.execute("SELECT * FROM games")
+	games = cur.fetchall()
+	closeDB(conn)
+	return game
