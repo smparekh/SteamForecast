@@ -1,8 +1,22 @@
 Tests that did well on training data
 
-python kNN.py -i 220.txt -k 1
-True Pos: 12 True Neg: 307 TypeI Err: 10 TypeII Err: 14
+Super Meat Boy:
+./kNN.py -i data/40800.txt -k 1 -w 1
+Parsing file:  data/40800.txt
 
-python kNN.py -i 400.txt -k 2
-True Pos: 12 True Neg: 297 TypeI Err: 13 TypeII Err: 21
+True Pos: 15 True Neg: 277 TypeI Err: 27 TypeII Err: 24
+
+Half-Life 2:
+./kNN.py -i data/220.txt -k 1 -w 1
+Parsing file:  data/220.txt
+
+True Pos: 15 True Neg: 310 TypeI Err: 7 TypeII Err: 11
+
+Killer Floor:
+ % ./kNN.py -i data/1250.txt -k 1 -w 1
+Parsing file:  data/1250.txt
+
+True Pos: 40 True Neg: 265 TypeI Err: 16 TypeII Err: 22
+
+
 

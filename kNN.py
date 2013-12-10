@@ -7,8 +7,9 @@ def main(argv):
     np.set_printoptions(threshold='nan')
     inputfile = ''
     kstr = ''
+    wstr = '0'
     try:
-        opts, args = getopt.getopt(argv, 'hi:k:g:')
+        opts, args = getopt.getopt(argv, 'hi:k:g:w:')
     except getopt.GetoptError:
         print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
         sys.exit(2)
@@ -20,6 +21,8 @@ def main(argv):
             inputfile = arg
         elif opt in ("-k"):
             kstr = arg
+        elif opt in ("-w"):
+            wstr = arg
         elif opt in ("-g", "--genfile"):
             inputfile = genFile(arg)
             sys.exit()
@@ -86,6 +89,8 @@ def main(argv):
     nnumSale = np.zeros((1,366), dtype=np.int)
     #print saleDates
     # Go through training data and create a prediction vector
+    
+    weight = genWeightVector(curYear-1, float(wstr))
     for i in range(0,366):
         if (i-k_day < 0):
             trainSaleRange = trainDates[0:k_year,0:i+k_day+1]
@@ -100,10 +105,19 @@ def main(argv):
         #print 'Current Day:', curDay
         #print trainDates, testDates
         # print testSaleRange, i
-        yesSale = (trainSaleRange==1).sum() + (testSaleRange==1).sum() 
-        noSale = (trainSaleRange==0).sum() + (testSaleRange==0).sum()
+        yes = np.zeros((numRows, 1), dtype=np.double)
+        no = np.zeros((numRows, 1), dtype=np.double)
+        for j in range(0,trainSaleRange.shape[0]):
+            # print j, trainSaleRange.shape[0]
+            yes[j] = (trainSaleRange[j,:]==1).sum() * weight[j]
+            no[j] = (trainSaleRange[j,:]==0).sum() * weight[j]
+        yes[j+1] = (testSaleRange==1).sum()
+        no[j+1] = (testSaleRange==0).sum()
+        yesSale = yes.sum()
+        noSale = no.sum()
         numSale[0,i] = yesSale
         nnumSale[0,i] = noSale
+        # print yes.sum(), yesSale, no.sum(), noSale
         #print 'Sale Days:', yesSale, '| Non sale days:', noSale
         # Predict a sale based on # of sale days surrounding that day in the past
         if (yesSale >= noSale):
@@ -165,5 +179,16 @@ def genFile(app_id):
             curTime =  startTime + datetime.timedelta(days=j)
             f.write(str(curTime.timetuple().tm_yday) + "," + str((curTime.year - release_date.year)+1)+'\n')
     f.close();
+
+def genWeightVector(lastyear, wconstant):
+    #print lastyear
+    weight = np.zeros((lastyear,1),dtype=np.double)
+    for i in range(0, lastyear):
+        weight[i] = 1 + ((i - lastyear+1) * wconstant)
+        if(weight[i] < 0):
+            weight[i] = 0
+    print weight
+    return weight
+
 if __name__ == "__main__": 
     main(sys.argv[1:])

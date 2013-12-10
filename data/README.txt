@@ -3,6 +3,7 @@ APP_ID      APP_NAME
 220         Half-Life 2
 400         Portal
 620         Portal 2
+1250	    Killing Floor
 2620        Call of Duty
 4000        Garry's Mod
 7670        Bioshock
