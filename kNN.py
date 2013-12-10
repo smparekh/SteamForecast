@@ -11,8 +11,9 @@ def main(argv):
     ystr = '-1'
     lstr = '0'
     rstr = '0'
+    pstr = '0'
     try:
-        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:l:r:')
+        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:l:r:p:')
     except getopt.GetoptError:
         print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
         sys.exit(2)
@@ -35,6 +36,8 @@ def main(argv):
             lstr = arg
         elif opt in ("-r", "--results"):
             rstr = '1'
+        elif opt in ("-p", "--predict"):
+            pstr = '1'
     try:
         infile = open(inputfile, 'r')
     except IOError:
@@ -42,6 +45,7 @@ def main(argv):
         sys.exit(2)
     print 'Parsing file: ', inputfile
     show_results = int(rstr)
+    make_predict = int(pstr)
     # Read Release Day, Release Year and Current Year from file
     rlsLine = infile.readline()
     rlsLine = rlsLine.strip()
@@ -49,7 +53,8 @@ def main(argv):
     rlsDate = int(rlsLine[0])
     rlsYear = int(rlsLine[1])
     curYear = int(rlsLine[2])
-
+    if(make_predict==1):
+        curYear += 1
     #print rlsDate, ", ", rlsYear, ", ", curYear
 
     # Create empty matrices
@@ -114,6 +119,7 @@ def main(argv):
         numyear = curYear - 1
     useYear = genUseYearVector(curYear-1, numyear)
    
+
     for i in range(0,366):
         testSaleRange = np.empty([])
         if (i-k_day < 0):
@@ -178,7 +184,11 @@ def main(argv):
     #print predVector, testDates
     # results = np.equal(predVector, testDates)
     # print (results==True).sum(), (results==False).sum()
-    print "True Pos: %s True Neg: %s TypeI Err: %s TypeII Err: %s" % (good, trueneg,falsepos,miss)
+    
+    if(make_predict == 0):
+        print "True Pos: %s True Neg: %s TypeI Err: %s TypeII Err: %s" % (good, trueneg,falsepos,miss)
+    else:
+        print predVector
     y = numyear +1 
     calculatek = 2*k*y+y-k-1
     print "calculated k: %s" %(calculatek)
@@ -210,6 +220,7 @@ def main(argv):
     f1 = open(fname,'a+')
     print >> f1, '%s,%s,%s,%s,%s' % (calculatek,good,falsepos,miss,trueneg)
     f1.close()
+
 def genFile(app_id):
     f = open(str(app_id)+".txt", "w")
 
