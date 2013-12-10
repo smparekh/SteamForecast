@@ -8,8 +8,9 @@ def main(argv):
     inputfile = ''
     kstr = ''
     wstr = '0'
+    ystr = '-1'
     try:
-        opts, args = getopt.getopt(argv, 'hi:k:g:w:')
+        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:')
     except getopt.GetoptError:
         print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
         sys.exit(2)
@@ -26,6 +27,8 @@ def main(argv):
         elif opt in ("-g", "--genfile"):
             inputfile = genFile(arg)
             sys.exit()
+        elif opt in ("-y"):
+            ystr = arg
     try:
         infile = open(inputfile, 'r')
     except IOError:
@@ -40,6 +43,7 @@ def main(argv):
     rlsDate = int(rlsLine[0])
     rlsYear = int(rlsLine[1])
     curYear = int(rlsLine[2])
+
     #print rlsDate, ", ", rlsYear, ", ", curYear
 
     # Create empty matrices
@@ -83,6 +87,7 @@ def main(argv):
     k_year = 999
     k_day = k
 
+
     # Create some more empty matrices
     predVector = np.zeros((1, 366), dtype=np.int)
     numSale = np.zeros((1, 366), dtype=np.int)
@@ -91,6 +96,10 @@ def main(argv):
     # Go through training data and create a prediction vector
     
     weight = genWeightVector(curYear-1, float(wstr))
+    numyear = int(ystr)
+    if(numyear< 0):
+        numyear = curYear - 1
+    useYear = genUseYearVector(curYear-1, numyear)
     for i in range(0,366):
         if (i-k_day < 0):
             trainSaleRange = trainDates[0:k_year,0:i+k_day+1]
@@ -109,8 +118,8 @@ def main(argv):
         no = np.zeros((numRows, 1), dtype=np.double)
         for j in range(0,trainSaleRange.shape[0]):
             # print j, trainSaleRange.shape[0]
-            yes[j] = (trainSaleRange[j,:]==1).sum() * weight[j]
-            no[j] = (trainSaleRange[j,:]==0).sum() * weight[j]
+            yes[j] = (trainSaleRange[j,:]==1).sum() * weight[j] * useYear[j]
+            no[j] = (trainSaleRange[j,:]==0).sum() * weight[j] * useYear[j]
         yes[j+1] = (testSaleRange==1).sum()
         no[j+1] = (testSaleRange==0).sum()
         yesSale = yes.sum()
@@ -147,6 +156,9 @@ def main(argv):
     # results = np.equal(predVector, testDates)
     # print (results==True).sum(), (results==False).sum()
     print "True Pos: %s True Neg: %s TypeI Err: %s TypeII Err: %s" % (good, trueneg,falsepos,miss)
+    y = numyear +1 
+    calculatek = 2*k*y+y-k-1
+    print "calculated k: %s" %(calculatek)
     # print numSale
     # print nnumSale
     # print trainDates#, testDates
@@ -187,8 +199,14 @@ def genWeightVector(lastyear, wconstant):
         weight[i] = 1 + ((i - lastyear+1) * wconstant)
         if(weight[i] < 0):
             weight[i] = 0
-    #print weight
     return weight
+
+def genUseYearVector(lastyear, nyears):
+    years = np.zeros((lastyear,1),dtype=np.int)
+    for i in range(0,lastyear):
+        if(i > lastyear - nyears -1):
+            years[i] = 1
+    return years
 
 if __name__ == "__main__": 
     main(sys.argv[1:])
