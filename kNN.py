@@ -9,8 +9,9 @@ def main(argv):
     kstr = ''
     wstr = '0'
     ystr = '-1'
+    lstr = '0'
     try:
-        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:')
+        opts, args = getopt.getopt(argv, 'hi:k:g:w:y:l:')
     except getopt.GetoptError:
         print 'Usage: kNN.py -i <inputfile> -k <k for knn> --gen <app_id for file>'
         sys.exit(2)
@@ -29,6 +30,8 @@ def main(argv):
             sys.exit()
         elif opt in ("-y"):
             ystr = arg
+        elif opt in ("-l"):
+            lstr = arg
     try:
         infile = open(inputfile, 'r')
     except IOError:
@@ -88,6 +91,13 @@ def main(argv):
     k_day = k
 
 
+
+    l_day = int(lstr)
+    lookbehind = False
+    print l_day
+    if(l_day < k_day):
+        lookbehind = True
+    print lookbehind
     # Create some more empty matrices
     predVector = np.zeros((1, 366), dtype=np.int)
     numSale = np.zeros((1, 366), dtype=np.int)
@@ -100,28 +110,38 @@ def main(argv):
     if(numyear< 0):
         numyear = curYear - 1
     useYear = genUseYearVector(curYear-1, numyear)
+   
     for i in range(0,366):
+        testSaleRange = np.empty([])
         if (i-k_day < 0):
             trainSaleRange = trainDates[0:k_year,0:i+k_day+1]
-            testSaleRange = testDates[0,:i]
+            #if(lookbehind):
+            #   testSaleRange = testDates[0,i-k_day:i-l_day]
         elif (i+k_day+1 <= 365):
             trainSaleRange = trainDates[0:k_year,i-k_day:i+k_day+1]
-            testSaleRange = testDates[0,i-k_day:i]
+            if(lookbehind):
+                testSaleRange = testDates[0,i-k_day:i-l_day]
         else:
             trainSaleRange = trainDates[0:k_year,i-k_day:]
-            testSaleRange = testDates[0,i-k_day:i]
-    
+            if(lookbehind):
+                testSaleRange = testDates[0,i-k_day:i-l_day]
+
         #print 'Current Day:', curDay
         #print trainDates, testDates
         # print testSaleRange, i
-        yes = np.zeros((numRows, 1), dtype=np.double)
-        no = np.zeros((numRows, 1), dtype=np.double)
+        if(lookbehind):
+            yes = np.zeros((numRows, 1), dtype=np.double)
+            no = np.zeros((numRows, 1), dtype=np.double)
+        else:
+            yes = np.zeros((numRows + 1, 1), dtype=np.double)
+            no = np.zeros((numRows + 1, 1), dtype=np.double)
         for j in range(0,trainSaleRange.shape[0]):
             # print j, trainSaleRange.shape[0]
             yes[j] = (trainSaleRange[j,:]==1).sum() * weight[j] * useYear[j]
             no[j] = (trainSaleRange[j,:]==0).sum() * weight[j] * useYear[j]
-        yes[j+1] = (testSaleRange==1).sum()
-        no[j+1] = (testSaleRange==0).sum()
+        if(lookbehind):
+            yes[j+1] = (testSaleRange==1).sum()
+            no[j+1] = (testSaleRange==0).sum()
         yesSale = yes.sum()
         noSale = no.sum()
         numSale[0,i] = yesSale
@@ -206,6 +226,7 @@ def genUseYearVector(lastyear, nyears):
     for i in range(0,lastyear):
         if(i > lastyear - nyears -1):
             years[i] = 1
+    print years
     return years
 
 if __name__ == "__main__": 
